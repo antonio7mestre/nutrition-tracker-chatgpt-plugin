@@ -1,6 +1,6 @@
 {
   "name": "nutrition-tracker",
-  "version": "0.2.0",
+  "version": "0.2.0+codex.20260729222932",
   "description": "Private meal, macro, goal, and weight tracking with an embedded dashboard.",
   "author": {
     "name": "Antonio Mestre",
@@ -17,6 +17,7 @@
     "weight"
   ],
   "skills": "./skills/",
+  "apps": "./.app.json",
   "interface": {
     "displayName": "Nutrition Tracker",
     "shortDescription": "Private nutrition tracking",

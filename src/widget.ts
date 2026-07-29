@@ -1,4 +1,4 @@
-export const WIDGET_URI = "ui://nutrition-tracker/dashboard-v2.html";
+export const WIDGET_URI = "ui://nutrition-tracker/dashboard-v3.html";
 
 export const WIDGET_HTML = String.raw`
 <!doctype html>
@@ -197,21 +197,48 @@ export const WIDGET_HTML = String.raw`
           esc(item.servingDescription) + '</span><strong>' + num(item.calories) +
           ' cal</strong>' + (options.removable
             ? '<button class="remove-ingredient" data-remove-saved-item="' + index +
+              '" data-meal-id="' + esc(options.mealId || "") +
               '" aria-label="Remove ' + esc(item.name) + '"' +
               (items.length === 1 ? " disabled" : "") + '>×</button>'
             : "") + '</div>').join("") + '</div>';
       }
-      function mealRows(meals, canDelete = false) {
+      function mealRows(meals, options = {}) {
         if (!meals?.length) return '<div class="empty">No meals logged yet.</div>';
         return meals.map((meal) => {
-          const remove = canDelete
+          const remove = options.canDelete
             ? '<button class="btn ghost" data-delete="' + esc(meal.id) + '">Remove</button>' : "";
           return '<div class="meal-entry"><div class="row"><div><div class="row-title">🍽️ ' + esc(meal.name) +
             '</div><div class="row-meta">' + esc(meal.mealType) + ' · ' +
             num(meal.totals?.proteinG) + 'g protein</div></div><div><div class="row-value">' +
             num(meal.totals?.calories) + ' cal</div>' + remove + '</div></div>' +
-            ingredientBreakdown(meal.items) + '</div>';
+            ingredientBreakdown(meal.items, {
+              removable: options.removable !== false,
+              mealId: meal.id
+            }) + '</div>';
         }).join("");
+      }
+      function bindSavedIngredientRemovals(meals) {
+        const byId = new Map((meals || []).map((meal) => [meal.id, meal]));
+        document.querySelectorAll("[data-remove-saved-item]").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const meal = byId.get(button.dataset.mealId);
+            if (!meal || (meal.items || []).length <= 1) return;
+            button.disabled = true;
+            const remainingItems = meal.items
+              .filter((_item, index) => index !== Number(button.dataset.removeSavedItem))
+              .map(({ id: _id, ...item }) => item);
+            try {
+              const result = await callTool("edit_meal", {
+                mealId: meal.id,
+                items: remainingItems
+              });
+              if (result?.structuredContent) render(result.structuredContent);
+            } catch (error) {
+              button.disabled = false;
+              button.title = "Could not remove ingredient: " + (error?.message || error);
+            }
+          });
+        });
       }
       function dayTotalsCard(day, options = {}) {
         if (!day?.date) return "";
@@ -421,31 +448,11 @@ export const WIDGET_HTML = String.raw`
           'g fat · ' + num(meal.totals?.fiberG) + 'g fiber</span></div></div>' +
           '<div class="ingredient-head"><div><h2>Ingredients</h2></div>' +
           '<span class="pill">' + items.length + ' items</span></div>' +
-          ingredientBreakdown(items, { removable: true }) +
+          ingredientBreakdown(items, { removable: true, mealId: meal.id }) +
           '<div id="saved-status"></div></section>' +
           dayTotalsCard(day) + '<div class="actions"><button id="edit-chat" class="btn">Edit in chat</button>' +
           '<button id="open-dashboard" class="btn primary">Open day</button></div>';
-        document.querySelectorAll("[data-remove-saved-item]").forEach((button) => {
-          button.addEventListener("click", async () => {
-            if (items.length <= 1) return;
-            button.disabled = true;
-            const remainingItems = items
-              .filter((_item, index) => index !== Number(button.dataset.removeSavedItem))
-              .map(({ id: _id, ...item }) => item);
-            try {
-              const result = await callTool("edit_meal", {
-                mealId: meal.id,
-                items: remainingItems
-              });
-              if (result?.structuredContent) render(result.structuredContent);
-            } catch (error) {
-              button.disabled = false;
-              document.getElementById("saved-status").innerHTML =
-                '<div class="status">Could not remove ingredient: ' +
-                esc(error?.message || error) + '</div>';
-            }
-          });
-        });
+        bindSavedIngredientRemovals([meal]);
         document.getElementById("edit-chat").onclick = () =>
           sendMessage('I want to correct my saved meal "' + meal.name +
             '" (meal ID ' + meal.id + '). Ask what I want to change, then preserve everything else.');
@@ -460,6 +467,7 @@ export const WIDGET_HTML = String.raw`
           '<span class="pill">' + esc(day.date || "") + '</span></div>' +
           dayTotalsCard(day) + '<section class="section"><div class="section-head"><h2>Meals</h2></div>' +
           '<div class="card list">' + mealRows(day.meals) + '</div></section>';
+        bindSavedIngredientRemovals(day.meals);
       }
       function renderDashboard(data) {
         const today = data.today || {};
@@ -499,7 +507,8 @@ export const WIDGET_HTML = String.raw`
           '<nav class="tabs" aria-label="Dashboard views"><button class="tab" data-tab="today" aria-selected="true">Meals</button>' +
           '<button class="tab" data-tab="week" aria-selected="false">7 days</button><button class="tab" data-tab="weight" aria-selected="false">Weight</button>' +
           '<button class="tab" data-tab="saved" aria-selected="false">Saved</button><button class="tab" data-tab="review" aria-selected="false">Check</button></nav>' +
-          '<section id="panel-today" class="panel active"><div class="card list">' + mealRows(today.meals, true) + '</div></section>' +
+          '<section id="panel-today" class="panel active"><div class="card list">' +
+          mealRows(today.meals, { canDelete: true }) + '</div></section>' +
           '<section id="panel-week" class="panel"><div class="card"><div class="week-chart">' +
           days.map((day) => '<div class="bar-wrap"><div class="row-meta">' + num(day.totals?.calories) +
           '</div><div class="bar" style="height:' + Math.max(2, Number(day.totals?.calories || 0) / maxCalories * 100) +
@@ -525,6 +534,7 @@ export const WIDGET_HTML = String.raw`
           '</div></section>' +
           (!goals.calorieGoal || !goals.proteinGoalG ? '<div class="actions"><button id="set-goals" class="btn primary">Set my goals</button></div>' : '');
         setupTabs();
+        bindSavedIngredientRemovals([...(today.meals || []), ...review]);
         document.querySelectorAll("[data-delete]").forEach((button) => {
           button.addEventListener("click", async () => {
             if (!confirm("Remove this meal from your history?")) return;
