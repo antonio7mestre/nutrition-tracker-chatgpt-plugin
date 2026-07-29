@@ -1,0 +1,38 @@
+{
+  "name": "nutrition-tracker-plugin",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Local-first MCP nutrition tracking plugin for ChatGPT and Codex.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "start": "node --no-warnings dist/server.mjs --stdio",
+    "start:http": "node --no-warnings dist/server.mjs --http",
+    "smoke": "node scripts/smoke.mjs",
+    "smoke:worker": "node scripts/smoke-worker.mjs",
+    "dev:worker": "wrangler dev",
+    "deploy:worker": "wrangler deploy",
+    "d1:migrate:local": "wrangler d1 migrations apply nutrition-tracker --local",
+    "d1:migrate:remote": "wrangler d1 migrations apply nutrition-tracker --remote"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/ext-apps": "1.7.5",
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "express": "5.1.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260729.1",
+    "@types/express": "5.0.5",
+    "@types/node": "24.10.1",
+    "esbuild": "0.28.1",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3",
+    "wrangler": "^4.115.0"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  }
+}

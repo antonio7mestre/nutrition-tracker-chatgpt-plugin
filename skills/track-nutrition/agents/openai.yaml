@@ -1,0 +1,4 @@
+interface:
+  display_name: "Track Nutrition"
+  short_description: "Log meals and track nutrition automatically"
+  default_prompt: "Use $track-nutrition to log this meal and show my remaining goals."

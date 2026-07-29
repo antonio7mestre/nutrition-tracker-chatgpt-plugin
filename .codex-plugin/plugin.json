@@ -1,0 +1,38 @@
+{
+  "name": "nutrition-tracker",
+  "version": "0.2.0",
+  "description": "Private meal, macro, goal, and weight tracking with an embedded dashboard.",
+  "author": {
+    "name": "Antonio Mestre"
+  },
+  "license": "MIT",
+  "keywords": [
+    "nutrition",
+    "calories",
+    "macros",
+    "protein",
+    "weight"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Nutrition Tracker",
+    "shortDescription": "Private nutrition tracking",
+    "longDescription": "Turn meal photos, voice notes, restaurant orders, and plain-language descriptions into automatically logged nutrition entries. See every ingredient, correct meals afterward in natural language, reuse favorite meals, and track calories, protein, macros, fiber, and weight trends in an embedded dashboard.",
+    "developerName": "Antonio Mestre",
+    "category": "Health",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Log this meal and show the ingredient breakdown with today's totals.",
+      "Change the rice in my last meal to two cups.",
+      "Show my nutrition dashboard for today."
+    ],
+    "brandColor": "#2F6BFF",
+    "composerIcon": "./assets/icon.svg",
+    "logo": "./assets/logo.svg"
+  },
+  "mcpServers": "./.mcp.json"
+}

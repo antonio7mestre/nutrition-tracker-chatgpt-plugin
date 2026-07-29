@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "nutrition-tracker": {
+      "command": "node",
+      "args": [
+        "--no-warnings",
+        "${PLUGIN_ROOT}/dist/server.mjs",
+        "--stdio"
+      ]
+    }
+  }
+}
