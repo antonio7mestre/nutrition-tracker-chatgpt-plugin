@@ -3,8 +3,11 @@
   "version": "0.2.0",
   "description": "Private meal, macro, goal, and weight tracking with an embedded dashboard.",
   "author": {
-    "name": "Antonio Mestre"
+    "name": "Antonio Mestre",
+    "url": "https://github.com/antonio7mestre"
   },
+  "homepage": "https://nutrition-tracker-mcp.antonio7mestre.workers.dev",
+  "repository": "https://github.com/antonio7mestre/nutrition-tracker-chatgpt-plugin",
   "license": "MIT",
   "keywords": [
     "nutrition",
@@ -20,6 +23,9 @@
     "longDescription": "Turn meal photos, voice notes, restaurant orders, and plain-language descriptions into automatically logged nutrition entries. See every ingredient, correct meals afterward in natural language, reuse favorite meals, and track calories, protein, macros, fiber, and weight trends in an embedded dashboard.",
     "developerName": "Antonio Mestre",
     "category": "Health",
+    "websiteURL": "https://nutrition-tracker-mcp.antonio7mestre.workers.dev",
+    "privacyPolicyURL": "https://nutrition-tracker-mcp.antonio7mestre.workers.dev/privacy",
+    "termsOfServiceURL": "https://nutrition-tracker-mcp.antonio7mestre.workers.dev/terms",
     "capabilities": [
       "Interactive",
       "Read",
