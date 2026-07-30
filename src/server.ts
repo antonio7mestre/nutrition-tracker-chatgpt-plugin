@@ -42,7 +42,7 @@ export function createNutritionServer(store: NutritionStoreApi): McpServer {
     },
     {
       instructions:
-        "For every newly analyzed meal, call log_meal immediately so the embedded UI shows the saved ingredient breakdown and totals for that meal's local date. Use preview_meal only when the user specifically asks to review an estimate before saving. The host interprets photos, voice, and natural-language corrections; this server validates, calculates, stores, and reports structured nutrition data. Use get_meal and edit_meal to apply later corrections without an extra confirmation step. Use the user's stated date when provided; otherwise dates are local to the timezone in goals. Use render_dashboard for the embedded visual dashboard.",
+        "For every newly analyzed meal, call log_meal immediately so the embedded UI shows the saved ingredient breakdown and totals for that meal's local date. Use preview_meal only when the user specifically asks to review an estimate before saving. The host interprets photos, voice, and natural-language corrections; this server validates, calculates, stores, and reports structured nutrition data. Use get_meal and edit_meal to apply later corrections without an extra confirmation step. Use the user's stated date when provided; otherwise dates are local to the timezone in goals. Use render_dashboard for the embedded visual dashboard. The embedded UI already contains the totals and ingredient list, so do not repeat them in a second long text response.",
     },
   );
 
@@ -85,7 +85,7 @@ export function createNutritionServer(store: NutritionStoreApi): McpServer {
       outputSchema: genericObjectOutputSchema,
       annotations: readOnly,
       _meta: {
-        ui: { resourceUri: WIDGET_URI },
+        ui: { resourceUri: WIDGET_URI, visibility: ["model", "app"] },
         "openai/toolInvocation/invoking": "Calculating meal estimate…",
         "openai/toolInvocation/invoked": "Meal estimate ready.",
       },
@@ -115,7 +115,7 @@ export function createNutritionServer(store: NutritionStoreApi): McpServer {
       outputSchema: genericObjectOutputSchema,
       annotations: localWrite,
       _meta: {
-        ui: { resourceUri: WIDGET_URI },
+        ui: { resourceUri: WIDGET_URI, visibility: ["model", "app"] },
         "openai/toolInvocation/invoking": "Saving meal…",
         "openai/toolInvocation/invoked": "Meal saved.",
       },
@@ -164,7 +164,7 @@ export function createNutritionServer(store: NutritionStoreApi): McpServer {
       outputSchema: genericObjectOutputSchema,
       annotations: localWrite,
       _meta: {
-        ui: { resourceUri: WIDGET_URI },
+        ui: { resourceUri: WIDGET_URI, visibility: ["model", "app"] },
         "openai/toolInvocation/invoking": "Updating meal…",
         "openai/toolInvocation/invoked": "Meal updated.",
       },
@@ -217,7 +217,7 @@ export function createNutritionServer(store: NutritionStoreApi): McpServer {
       outputSchema: genericObjectOutputSchema,
       annotations: readOnly,
       _meta: {
-        ui: { resourceUri: WIDGET_URI },
+        ui: { resourceUri: WIDGET_URI, visibility: ["model", "app"] },
         "openai/toolInvocation/invoking": "Calculating daily totals…",
         "openai/toolInvocation/invoked": "Daily totals ready.",
       },
@@ -267,7 +267,7 @@ export function createNutritionServer(store: NutritionStoreApi): McpServer {
       outputSchema: genericObjectOutputSchema,
       annotations: readOnly,
       _meta: {
-        ui: { resourceUri: WIDGET_URI },
+        ui: { resourceUri: WIDGET_URI, visibility: ["model", "app"] },
         "openai/toolInvocation/invoking": "Building nutrition dashboard…",
         "openai/toolInvocation/invoked": "Nutrition dashboard ready.",
       },
@@ -437,7 +437,7 @@ export function createNutritionServer(store: NutritionStoreApi): McpServer {
       outputSchema: genericObjectOutputSchema,
       annotations: localWrite,
       _meta: {
-        ui: { resourceUri: WIDGET_URI },
+        ui: { resourceUri: WIDGET_URI, visibility: ["model", "app"] },
         "openai/toolInvocation/invoking": "Logging saved meal…",
         "openai/toolInvocation/invoked": "Saved meal logged.",
       },

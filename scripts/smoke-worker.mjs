@@ -28,7 +28,7 @@ try {
   const resources = await client.listResources();
   assert(
     resources.resources.some(
-      (resource) => resource.uri === "ui://nutrition-tracker/dashboard-v3.html",
+      (resource) => resource.uri === "ui://nutrition-tracker/dashboard-v4.html",
     ),
     "Missing nutrition UI resource",
   );
