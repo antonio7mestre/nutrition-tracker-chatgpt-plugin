@@ -1,6 +1,6 @@
 const goals = {
   calorieGoal: 2_050,
-  proteinGoalG: 165,
+  proteinGoalG: 200,
   carbsGoalG: 210,
   fatGoalG: 70,
   fiberGoalG: 30,
@@ -26,7 +26,7 @@ export const dashboardPreviewData = {
     goals,
     remaining: {
       calories: 622,
-      proteinG: 33,
+      proteinG: 68,
       carbsG: 82,
       fatG: 24,
       fiberG: 9,
@@ -185,7 +185,7 @@ export const mealPreviewData = {
     goals,
     remaining: {
       calories: -263,
-      proteinG: -76.8,
+      proteinG: -41.8,
       carbsG: 31.1,
       fatG: 0.6,
       fiberG: 3.4,
@@ -272,6 +272,6 @@ export const savedMealPreviewData = {
     totals: mealPreviewData.projectedDay.totals,
     goals,
     remaining: mealPreviewData.projectedDay.remaining,
-    meals: [...dashboardPreviewData.today.meals, savedPreviewMeal],
+    meals: [savedPreviewMeal, ...dashboardPreviewData.today.meals],
   },
 };

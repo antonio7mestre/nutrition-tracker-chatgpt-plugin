@@ -1,4 +1,4 @@
-export const WIDGET_URI = "ui://nutrition-tracker/dashboard-v4.html";
+export const WIDGET_URI = "ui://nutrition-tracker/dashboard-v6.html";
 
 export const WIDGET_HTML = String.raw`
 <!doctype html>
@@ -51,7 +51,7 @@ export const WIDGET_HTML = String.raw`
     .hero-side .metric-sub { color:color-mix(in srgb, var(--paper) 65%, transparent); }
     .remaining { font-size:28px; font-weight:900; letter-spacing:-.04em; }
     .progress { height:10px; border-radius:99px; background:var(--line); overflow:hidden; margin-top:15px; }
-    .progress > i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--accent),var(--accent-2)); width:0; }
+    .progress > i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--accent),var(--accent-2)); width:0; transition:width .72s cubic-bezier(.22,1,.36,1); }
     .macros { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:12px 0; }
     .macro { padding:14px; min-width:0; }
     .macro strong { display:block; font-size:21px; font-weight:900; letter-spacing:-.035em; margin-top:4px; }
@@ -64,7 +64,8 @@ export const WIDGET_HTML = String.raw`
     .list { overflow:hidden; }
     .row { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; padding:14px 16px; border-top:1px solid var(--line); }
     .row:first-child { border-top:0; }
-    .row-title { font-weight:850; }
+    .row > div:first-child { min-width:0; }
+    .row-title { font-weight:850; overflow-wrap:anywhere; }
     .row-meta { color:var(--muted); font-size:12px; margin-top:2px; }
     .row-value { text-align:right; font-weight:900; }
     .tabs { display:flex; gap:4px; margin:0; padding:12px; border-bottom:1px solid var(--line); overflow:auto; background:transparent; }
@@ -83,40 +84,52 @@ export const WIDGET_HTML = String.raw`
     .btn { min-height:48px; border:1px solid var(--line); border-radius:14px; padding:12px 16px; background:var(--card-strong); color:var(--ink); cursor:pointer; font-weight:900; touch-action:manipulation; }
     .btn.primary { border-color:var(--accent); background:linear-gradient(135deg,var(--accent-2),var(--accent)); color:white; box-shadow:0 10px 24px rgba(47,107,255,.28); }
     .btn.ghost { min-height:38px; padding:7px 10px; font-size:11px; color:var(--muted); }
-    .quick-edit { min-height:38px; border:1px solid var(--line); border-radius:11px; padding:7px 11px; color:var(--ink); background:transparent; cursor:pointer; font-weight:900; }
     .btn:disabled { opacity:.45; cursor:not-allowed; box-shadow:none; }
     .preview { padding:20px; }
     .preview-total { display:flex; align-items:end; justify-content:space-between; gap:14px; margin:18px 0; }
     .ingredient-head { display:flex; align-items:end; justify-content:space-between; gap:12px; margin:18px 2px 9px; }
     .ingredient-head h2 { margin:3px 0 0; font-size:18px; font-weight:900; letter-spacing:-.025em; }
-    .ingredient-stack { display:grid; gap:10px; }
-    .ingredient-card { position:relative; padding:14px; border:1px solid var(--line); border-radius:17px; background:rgba(5,7,11,.62); }
-    .ingredient-top { display:grid; grid-template-columns:minmax(0,1fr) 92px 42px; gap:8px; align-items:end; }
-    .ingredient-fields { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; margin-top:9px; }
-    .field { display:block; min-width:0; }
-    .field > span { display:block; margin:0 0 5px 2px; color:var(--muted); font-size:10px; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
-    .field input { width:100%; min-height:44px; border:1px solid var(--line); border-radius:12px; padding:10px 11px; color:var(--ink); background:var(--card-strong); font:inherit; font-size:15px; font-weight:800; outline:none; }
-    .field input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(47,107,255,.18); }
-    .field.portion { margin-top:9px; }
-    .remove-ingredient { width:44px; min-width:44px; height:44px; border:1px solid rgba(47,107,255,.52); border-radius:12px; color:var(--rose); background:rgba(47,107,255,.14); font-size:23px; font-weight:900; cursor:pointer; pointer-events:auto; touch-action:manipulation; }
-    .add-ingredient { width:100%; margin-top:10px; border-style:dashed; color:var(--lime); }
     .ingredient-breakdown { display:grid; gap:7px; margin:0 16px 14px; padding-top:13px; border-top:1px solid var(--line); }
     .ingredient-line { display:flex; align-items:center; justify-content:space-between; gap:10px; color:var(--muted); }
     .ingredient-line > span { flex:1; min-width:0; }
     .ingredient-line strong { color:var(--ink); font-weight:900; }
-    .ingredient-line .remove-ingredient { flex:0 0 44px; width:44px; height:44px; }
+    .meal-metrics, .ingredient-metrics { text-align:right; white-space:nowrap; }
+    .meal-metrics strong, .ingredient-metrics strong { display:block; color:var(--ink); font-weight:900; }
+    .meal-metrics small, .ingredient-metrics small { display:block; margin-top:2px; color:var(--muted); font-size:11px; font-weight:800; }
+    .meal-disclosure { border-top:1px solid var(--line); }
+    .meal-disclosure summary {
+      min-height:48px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 16px;
+      color:var(--accent-2);
+      cursor:pointer;
+      list-style:none;
+      font-weight:900;
+      touch-action:manipulation;
+    }
+    .meal-disclosure summary::-webkit-details-marker { display:none; }
+    .meal-disclosure summary::after { content:"⌄"; font-size:18px; line-height:1; transition:transform .16s ease; }
+    .meal-disclosure[open] summary::after { transform:rotate(180deg); }
+    .meal-disclosure .when-open { display:none; }
+    .meal-disclosure[open] .when-closed { display:none; }
+    .meal-disclosure[open] .when-open { display:inline; }
     .assumptions { margin:14px 0 0; padding:13px 14px; border-radius:14px; background:rgba(167,179,196,.11); color:var(--muted); }
     .assumptions ul { margin:7px 0 0; padding-left:18px; }
     .status { padding:10px 12px; border-radius:12px; background:rgba(47,107,255,.16); color:var(--ink); margin-top:12px; }
     .day-card { margin:0; padding:18px; overflow:hidden; }
     .day-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
     .day-title { margin:3px 0 0; font-size:19px; letter-spacing:-.025em; }
-    .day-kcal { display:flex; align-items:baseline; gap:7px; margin-top:17px; }
-    .day-kcal strong { font-size:40px; font-weight:950; line-height:1; letter-spacing:-.055em; }
-    .day-remaining { margin-left:auto; color:var(--muted); font-size:12px; font-weight:850; }
-    .day-macros { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:14px; }
+    .day-kcal { display:flex; align-items:baseline; gap:7px; margin-top:14px; }
+    .day-kcal strong { color:var(--accent-2); font-size:46px; font-weight:950; line-height:1; letter-spacing:-.06em; }
+    .day-remaining { margin-left:auto; color:var(--muted); font-size:12px; font-weight:850; white-space:nowrap; }
+    .day-macros { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin-top:12px; }
     .day-macro { padding:11px 12px; border:1px solid var(--line); border-radius:14px; background:color-mix(in srgb, var(--card) 75%, transparent); min-width:0; }
-    .day-macro strong { display:block; margin-top:3px; font-size:18px; font-weight:900; letter-spacing:-.03em; }
+    .day-macro .eyebrow { font-size:9px; letter-spacing:.08em; }
+    .day-macro strong { display:block; margin-top:3px; font-size:18px; font-weight:900; letter-spacing:-.035em; white-space:nowrap; }
+    .day-macro.protein-share strong { color:var(--accent-2); }
     .day-comparison { margin-top:13px; padding-top:12px; border-top:1px solid var(--line); color:var(--muted); font-size:12px; }
     .dashboard-card .panel { padding:0; }
     .dashboard-card .week-chart, .dashboard-card .spark { border:0; }
@@ -139,19 +152,20 @@ export const WIDGET_HTML = String.raw`
       .macros { grid-template-columns:repeat(2,1fr); }
       .preview { padding:17px; }
       .preview-total { align-items:flex-start; }
-      .ingredient-fields { grid-template-columns:repeat(2,1fr); }
-      .day-head { display:block; }
-      .day-head .pill { display:inline-block; margin-top:9px; }
-      .day-macros { grid-template-columns:repeat(2,1fr); }
+      .day-head { display:flex; }
+      .day-head .pill { padding:7px 9px; font-size:11px; }
+      .day-macros { grid-template-columns:repeat(4,minmax(0,1fr)); }
+      .day-macro { padding:9px 8px; }
+      .day-macro strong { font-size:16px; }
       .actions { display:grid; grid-template-columns:1fr 1fr; padding:10px 0 max(4px, env(safe-area-inset-bottom)); }
       .actions .btn { width:100%; }
     }
     @media (max-width:400px) {
       .preview-total { display:block; }
       .preview-total .row-value { margin-top:16px; text-align:left; }
-      .ingredient-top { grid-template-columns:minmax(0,1fr) 82px 42px; }
-      .day-kcal { flex-wrap:wrap; }
-      .day-remaining { width:100%; margin:1px 0 0; }
+      .day-kcal { gap:6px; }
+      .day-kcal strong { font-size:42px; }
+      .day-remaining { margin-left:auto; font-size:10px; }
       .row { padding:13px 14px; }
     }
   </style>
@@ -173,6 +187,9 @@ export const WIDGET_HTML = String.raw`
         ? Number(value).toLocaleString(document.documentElement.lang || "en-US", { maximumFractionDigits: digits })
         : "—";
       const pct = (value, goal) => !goal ? 0 : Math.max(0, Math.min(100, Number(value || 0) / Number(goal) * 100));
+      const proteinCaloriePct = (totals) => Number(totals?.calories) > 0
+        ? Math.max(0, Math.min(100, Math.round(Number(totals?.proteinG || 0) * 4 / Number(totals.calories) * 100)))
+        : 0;
       const dateLabel = (date) => {
         if (!date) return "Selected day";
         const parsed = new Date(date + "T12:00:00");
@@ -202,226 +219,73 @@ export const WIDGET_HTML = String.raw`
         if (window.openai?.sendFollowUpMessage) return window.openai.sendFollowUpMessage({ prompt: text });
         return request("ui/message", { role: "user", content: [{ type: "text", text }] });
       }
-      function ingredientBreakdown(items, options = {}) {
+      function ingredientBreakdown(items) {
         if (!items?.length) return "";
-        return '<div class="ingredient-breakdown">' + items.map((item, index) =>
+        return '<div class="ingredient-breakdown">' + items.map((item) =>
           '<div class="ingredient-line"><span>' + esc(item.name) + ' · ' +
-          esc(item.servingDescription) + '</span><strong>' + num(item.calories) +
-          ' cal</strong>' + (options.removable
-            ? '<button type="button" class="remove-ingredient" data-remove-saved-item="' + index +
-              '" data-meal-id="' + esc(options.mealId || "") +
-              '" aria-label="Remove ' + esc(item.name) + '">×</button>'
-            : "") + '</div>').join("") + '</div>';
+          esc(item.servingDescription) + '</span><div class="ingredient-metrics"><strong>' +
+          num(item.proteinG) + 'g protein</strong><small>' + num(item.calories) +
+          ' cal</small></div></div>').join("") + '</div>';
       }
-      function mealRows(meals, options = {}) {
+      function mealRows(meals) {
         if (!meals?.length) return '<div class="empty">No meals logged yet.</div>';
         return meals.map((meal) => {
-          const remove = options.canDelete
-            ? '<button type="button" class="btn ghost" data-delete="' + esc(meal.id) + '">Remove</button>' : "";
           return '<div class="meal-entry"><div class="row"><div><div class="row-title">🍽️ ' + esc(meal.name) +
-            '</div><div class="row-meta">' + esc(meal.mealType) + ' · ' +
-            num(meal.totals?.proteinG) + 'g protein</div></div><div><div class="row-value">' +
-            num(meal.totals?.calories) + ' cal</div><button type="button" class="quick-edit" data-edit-meal="' +
-            esc(meal.id) + '">Edit</button>' + remove + '</div></div>' +
-            ingredientBreakdown(meal.items, {
-              removable: options.removable !== false,
-              mealId: meal.id
-            }) + '</div>';
+            '</div><div class="row-meta">' + esc(meal.mealType) + '</div></div><div class="meal-metrics"><strong>' +
+            num(meal.totals?.proteinG) + 'g protein</strong><small>' +
+            num(meal.totals?.calories) + ' cal</small></div></div>' +
+            ingredientBreakdown(meal.items) + '</div>';
         }).join("");
       }
-      function bindSavedIngredientRemovals(meals) {
-        const byId = new Map((meals || []).map((meal) => [meal.id, meal]));
-        document.querySelectorAll("[data-remove-saved-item]").forEach((button) => {
-          button.addEventListener("click", async () => {
-            const meal = byId.get(button.dataset.mealId);
-            if (!meal) return;
-            button.disabled = true;
-            button.textContent = "…";
-            if ((meal.items || []).length === 1) {
-              try {
-                await callTool("delete_meal", { mealId: meal.id, confirmed: true });
-                const result = await callTool("get_today", { date: meal.localDate });
-                if (result?.structuredContent) render(result.structuredContent);
-              } catch (error) {
-                button.disabled = false;
-                button.textContent = "×";
-                button.title = "Could not remove ingredient: " + (error?.message || error);
-              }
-              return;
-            }
-            const remainingItems = meal.items
-              .filter((_item, index) => index !== Number(button.dataset.removeSavedItem))
-              .map(({ id: _id, ...item }) => item);
-            try {
-              const result = await callTool("edit_meal", {
-                mealId: meal.id,
-                items: remainingItems
-              });
-              if (result?.structuredContent) render(result.structuredContent);
-            } catch (error) {
-              button.disabled = false;
-              button.textContent = "×";
-              button.title = "Could not remove ingredient: " + (error?.message || error);
-            }
-          });
-        });
-      }
-      function bindMealEdits(meals) {
-        const byId = new Map((meals || []).map((meal) => [meal.id, meal]));
-        document.querySelectorAll("[data-edit-meal]").forEach((button) => {
-          button.addEventListener("click", async () => {
-            const meal = byId.get(button.dataset.editMeal);
-            if (!meal) return;
-            button.disabled = true;
-            button.textContent = "Opening…";
-            try {
-              await sendMessage('Change my saved meal "' + meal.name +
-                '" (meal ID ' + meal.id + '). Preserve everything I do not mention.');
-            } catch (error) {
-              button.disabled = false;
-              button.textContent = "Edit";
-              button.title = "Could not open chat edit: " + (error?.message || error);
-            }
-          });
-        });
+      function collapsibleMealRows(meals) {
+        if (!meals?.length) return '<div class="list"><div class="empty">No meals logged yet.</div></div>';
+        const recent = meals.slice(0, 1);
+        const older = meals.slice(1);
+        return '<div class="list recent-meals">' + mealRows(recent) + '</div>' +
+          (older.length
+            ? '<details class="meal-disclosure"><summary><span class="when-closed">View all ' +
+              meals.length + ' meals</span><span class="when-open">Show latest meal</span></summary>' +
+              '<div class="list">' + mealRows(older) + '</div></details>'
+            : "");
       }
       function dayTotalsCard(day, options = {}) {
         if (!day?.date) return "";
         const totals = day.totals || {};
         const goals = day.goals || {};
-        const remaining = day.remaining || {};
         const mealCount = options.projected
           ? Number(day.savedMealCount || 0)
           : Number(day.meals?.length || 0);
         const countLabel = options.projected
-          ? mealCount + " saved + estimate"
+          ? (mealCount + 1) + " meals"
           : mealCount + " meal" + (mealCount === 1 ? "" : "s");
-        const calorieRemaining = Number(remaining.calories);
-        const remainingLabel = remaining.calories == null
-          ? "No calorie goal set"
-          : calorieRemaining >= 0
-            ? num(calorieRemaining) + " cal left"
-            : num(Math.abs(calorieRemaining)) + " cal over";
+        const proteinGoal = Number(goals.proteinGoalG || 200);
+        const proteinRemaining = proteinGoal - Number(totals.proteinG || 0);
+        const newestMealProtein = Number(day.meals?.[0]?.totals?.proteinG || 0);
+        const previousProtein = options.projected && options.current
+          ? Number(options.current.totals?.proteinG || 0)
+          : Math.max(0, Number(totals.proteinG || 0) - newestMealProtein);
+        const progressStart = pct(previousProtein, proteinGoal);
+        const progressTarget = pct(totals.proteinG, proteinGoal);
+        const remainingLabel = proteinRemaining >= 0
+          ? num(proteinRemaining) + "g to goal"
+          : num(Math.abs(proteinRemaining)) + "g over goal";
+        const proteinShare = proteinCaloriePct(totals);
         const comparison = options.projected && options.current
           ? '<div class="day-comparison">Currently saved: <strong>' +
-            num(options.current.totals?.calories) + ' cal</strong> · This estimate adds <strong>' +
-            num(options.mealCalories) + ' cal</strong>. Preview only.</div>'
+            num(options.current.totals?.proteinG) + 'g protein</strong> · This estimate adds <strong>' +
+            num(options.mealProtein) + 'g</strong>. Preview only.</div>'
           : "";
         return '<section class="card day-card"><div class="day-head"><div><div class="eyebrow">' +
-          (options.projected ? "Day total if logged" : "Daily totals") +
+          (options.projected ? "Protein if logged" : "Daily protein") +
           '</div><h2 class="day-title">' + esc(dateLabel(day.date)) + '</h2></div><span class="pill">' +
-          esc(countLabel) + '</span></div><div class="day-kcal"><strong>' + num(totals.calories) +
-          '</strong><span>calories</span><span class="day-remaining">' + esc(remainingLabel) +
-          '</span></div><div class="progress"><i style="width:' + pct(totals.calories, goals.calorieGoal) +
-          '%"></i></div><div class="day-macros"><div class="day-macro"><div class="eyebrow">Protein</div><strong>' +
-          num(totals.proteinG) + 'g</strong></div><div class="day-macro"><div class="eyebrow">Carbs</div><strong>' +
-          num(totals.carbsG) + 'g</strong></div><div class="day-macro"><div class="eyebrow">Fat</div><strong>' +
-          num(totals.fatG) + 'g</strong></div><div class="day-macro"><div class="eyebrow">Fiber</div><strong>' +
-          num(totals.fiberG) + 'g</strong></div></div>' + comparison + '</section>';
-      }
-      const nutrientFields = ["calories", "proteinG", "carbsG", "fatG", "fiberG"];
-      const roundNutrient = (value) => Math.round((Number(value) || 0) * 10) / 10;
-      function recalculateMeal(meal) {
-        meal.totals = Object.fromEntries(nutrientFields.map((field) => [
-          field,
-          roundNutrient((meal.items || []).reduce((sum, item) => sum + Number(item[field] || 0), 0))
-        ]));
-      }
-      function refreshPreviewTotals(data) {
-        const meal = data.meal || {};
-        recalculateMeal(meal);
-        const base = data.day?.totals || {};
-        const projected = data.projectedDay || {};
-        projected.totals = Object.fromEntries(nutrientFields.map((field) => [
-          field,
-          roundNutrient(Number(base[field] || 0) + Number(meal.totals[field] || 0))
-        ]));
-        const goals = projected.goals || {};
-        const goalFields = {
-          calories: "calorieGoal",
-          proteinG: "proteinGoalG",
-          carbsG: "carbsGoalG",
-          fatG: "fatGoalG",
-          fiberG: "fiberGoalG"
-        };
-        projected.remaining = Object.fromEntries(nutrientFields.map((field) => {
-          const goal = goals[goalFields[field]];
-          return [field, goal == null ? null : roundNutrient(Number(goal) - Number(projected.totals[field] || 0))];
-        }));
-        data.projectedDay = projected;
-        const caloriesNode = document.getElementById("meal-calories");
-        const macrosNode = document.getElementById("meal-macros");
-        const projectionNode = document.getElementById("projection");
-        if (caloriesNode) caloriesNode.textContent = num(meal.totals.calories);
-        if (macrosNode) macrosNode.innerHTML = '<strong>' + num(meal.totals.proteinG) +
-          'g protein</strong><br><span class="row-meta">' + num(meal.totals.carbsG) +
-          'g carbs · ' + num(meal.totals.fatG) + 'g fat · ' + num(meal.totals.fiberG) +
-          'g fiber</span>';
-        if (projectionNode) projectionNode.innerHTML = dayTotalsCard(projected, {
-          projected: true,
-          current: data.day,
-          mealCalories: meal.totals.calories
-        });
-      }
-      function ingredientEditor(items) {
-        return '<div class="ingredient-stack">' + items.map((item, index) =>
-          '<article class="ingredient-card"><div class="ingredient-top"><label class="field"><span>Ingredient</span>' +
-          '<input data-item-index="' + index + '" data-item-field="name" value="' + esc(item.name) +
-          '" aria-label="Ingredient ' + (index + 1) + ' name"></label><label class="field"><span>Calories</span>' +
-          '<input type="number" inputmode="decimal" min="0" step="0.1" data-item-index="' + index +
-          '" data-item-field="calories" value="' + esc(item.calories) + '" aria-label="' +
-          esc(item.name) + ' calories"></label><button type="button" class="remove-ingredient" data-remove-item="' +
-          index + '" aria-label="Remove ' + esc(item.name) + '"' +
-          (items.length === 1 ? " disabled" : "") + '>×</button></div>' +
-          '<label class="field portion"><span>Portion</span><input data-item-index="' + index +
-          '" data-item-field="servingDescription" value="' + esc(item.servingDescription) +
-          '" aria-label="' + esc(item.name) + ' portion"></label><div class="ingredient-fields">' +
-          [["proteinG","Protein g"],["carbsG","Carbs g"],["fatG","Fat g"],["fiberG","Fiber g"]]
-            .map(([field, label]) => '<label class="field"><span>' + label +
-              '</span><input type="number" inputmode="decimal" min="0" step="0.1" data-item-index="' +
-              index + '" data-item-field="' + field + '" value="' + esc(item[field]) +
-              '" aria-label="' + esc(item.name) + ' ' + label + '"></label>').join("") +
-          '</div></article>').join("") + '</div>';
-      }
-      function bindIngredientEditor(data) {
-        const meal = data.meal || {};
-        document.querySelectorAll("[data-item-field]").forEach((input) => {
-          input.addEventListener("input", () => {
-            const item = meal.items?.[Number(input.dataset.itemIndex)];
-            if (!item) return;
-            const field = input.dataset.itemField;
-            item[field] = nutrientFields.includes(field)
-              ? Math.max(0, Number(input.value) || 0)
-              : input.value;
-            refreshPreviewTotals(data);
-          });
-        });
-        document.querySelectorAll("[data-remove-item]").forEach((button) => {
-          button.addEventListener("click", () => {
-            if ((meal.items || []).length <= 1) return;
-            meal.items.splice(Number(button.dataset.removeItem), 1);
-            recalculateMeal(meal);
-            renderPreview(data);
-          });
-        });
-        const addButton = document.getElementById("add-ingredient");
-        if (addButton) addButton.addEventListener("click", () => {
-          meal.items.push({
-            name: "New ingredient",
-            servingDescription: "Enter portion",
-            quantity: 1,
-            unit: "serving",
-            calories: 0,
-            proteinG: 0,
-            carbsG: 0,
-            fatG: 0,
-            fiberG: 0,
-            confidence: 0.6,
-            assumptions: []
-          });
-          recalculateMeal(meal);
-          renderPreview(data);
-        });
+          esc(countLabel) + '</span></div><div class="day-kcal"><strong>' + num(totals.proteinG) +
+          '</strong><span>g protein</span><span class="day-remaining">' + esc(remainingLabel) +
+          '</span></div><div class="progress"><i data-progress-target="' + progressTarget +
+          '" style="width:' + progressStart + '%"></i></div><div class="day-macros"><div class="day-macro"><div class="eyebrow">Calories</div><strong>' +
+          num(totals.calories) + '</strong></div><div class="day-macro protein-share"><div class="eyebrow">% from P</div><strong>' +
+          num(proteinShare) + '%</strong></div><div class="day-macro"><div class="eyebrow">Fiber</div><strong>' +
+          num(totals.fiberG) + 'g</strong></div><div class="day-macro"><div class="eyebrow">Carbs</div><strong>' +
+          num(totals.carbsG) + 'g</strong></div></div>' + comparison + '</section>';
       }
       function setupTabs() {
         document.querySelectorAll(".tab").forEach((button) => {
@@ -442,13 +306,12 @@ export const WIDGET_HTML = String.raw`
           '<div class="eyebrow">Meal preview</div><h2>' + esc(meal.name || "Meal estimate") +
           '</h2></div><span class="pill">' + Math.round(Number(meal.confidence || 0) * 100) +
           '%</span></div><div class="preview-total"><div><div class="eyebrow">Meal total</div>' +
-          '<div id="meal-calories" class="metric-big">' + num(meal.totals?.calories) + '</div><div class="metric-sub">calories</div></div>' +
-          '<div id="meal-macros" class="row-value"><strong>' + num(meal.totals?.proteinG) + 'g protein</strong><br><span class="row-meta">' +
-          num(meal.totals?.carbsG) + 'g carbs · ' + num(meal.totals?.fatG) + 'g fat · ' +
+          '<div id="meal-protein" class="metric-big">' + num(meal.totals?.proteinG) + '</div><div class="metric-sub">grams protein</div></div>' +
+          '<div id="meal-summary" class="row-value"><strong>' + num(meal.totals?.calories) + ' calories</strong><br><span class="row-meta">' +
+          num(proteinCaloriePct(meal.totals)) + '% from P · ' +
           num(meal.totals?.fiberG) + 'g fiber</span></div></div>' +
           '<div class="ingredient-head"><div><h2>Ingredients</h2></div>' +
-          '<span class="pill">' + items.length + ' items</span></div>' + ingredientEditor(items) +
-          '<button type="button" id="add-ingredient" class="btn add-ingredient">＋ Add ingredient</button>' +
+          '<span class="pill">' + items.length + ' items</span></div>' + ingredientBreakdown(items) +
           (assumptions.length ? '<div class="assumptions"><strong>Assumptions</strong><ul>' +
             assumptions.map((item) => '<li>' + esc(item) + '</li>').join("") + '</ul></div>' : '') +
           '<div id="preview-status"></div><div class="actions"><button type="button" id="confirm" class="btn primary">Save meal</button>' +
@@ -456,9 +319,8 @@ export const WIDGET_HTML = String.raw`
           '<div id="projection">' + dayTotalsCard(data.projectedDay, {
             projected: true,
             current: data.day,
-            mealCalories: meal.totals?.calories
+            mealProtein: meal.totals?.proteinG
           }) + '</div></div>';
-        bindIngredientEditor(data);
         document.getElementById("confirm").onclick = async () => {
           const button = document.getElementById("confirm");
           button.disabled = true;
@@ -490,19 +352,13 @@ export const WIDGET_HTML = String.raw`
       function renderDayView(day) {
         const meals = day.meals || [];
         root.innerHTML = '<div class="two-card-view">' + dayTotalsCard(day) +
-          '<section class="card meals-card"><div class="card-heading"><div><div class="eyebrow">Breakdown</div>' +
-          '<h2>Meals</h2></div><span class="pill">' + meals.length + '</span></div>' +
-          '<div class="list">' + mealRows(meals) + '</div></section></div>';
-        bindSavedIngredientRemovals(meals);
-        bindMealEdits(meals);
+          '<section class="card meals-card">' + collapsibleMealRows(meals) + '</section></div>';
       }
       function renderDashboard(data) {
         const today = data.today || {};
-        const totals = today.totals || {};
         const goals = today.goals || {};
-        const remaining = today.remaining || {};
         const days = data.week?.days || [];
-        const maxCalories = Math.max(Number(goals.calorieGoal || 0), ...days.map((d) => Number(d.totals?.calories || 0)), 1);
+        const maxProtein = Math.max(Number(goals.proteinGoalG || 200), ...days.map((d) => Number(d.totals?.proteinG || 0)), 1);
         const weights = data.weightTrend?.entries || [];
         const points = weights.map((entry, index) => {
           const x = weights.length < 2 ? 50 : 5 + index / (weights.length - 1) * 90;
@@ -521,14 +377,14 @@ export const WIDGET_HTML = String.raw`
           '<button type="button" class="tab" data-tab="weight" aria-selected="false">Weight</button>' +
           '<button type="button" class="tab" data-tab="saved" aria-selected="false">Saved</button>' +
           '<button type="button" class="tab" data-tab="review" aria-selected="false">Check</button></nav>' +
-          '<section id="panel-today" class="panel active"><div class="list">' +
-          mealRows(today.meals, { canDelete: true }) + '</div></section>' +
+          '<section id="panel-today" class="panel active">' +
+          collapsibleMealRows(today.meals) + '</section>' +
           '<section id="panel-week" class="panel"><div class="week-chart">' +
-          days.map((day) => '<div class="bar-wrap"><div class="row-meta">' + num(day.totals?.calories) +
-          '</div><div class="bar" style="height:' + Math.max(2, Number(day.totals?.calories || 0) / maxCalories * 100) +
+          days.map((day) => '<div class="bar-wrap"><div class="row-meta">' + num(day.totals?.proteinG) + 'g' +
+          '</div><div class="bar" style="height:' + Math.max(2, Number(day.totals?.proteinG || 0) / maxProtein * 100) +
           '%"></div><div class="bar-label">' + esc(new Date(day.date + 'T12:00:00Z').toLocaleDateString(undefined,{weekday:'short'}).slice(0,1)) +
-          '</div></div>').join("") + '</div><div class="macros"><div class="macro"><div class="eyebrow">Avg calories</div><strong>' +
-          num(data.week?.averages?.calories) + '</strong></div><div class="macro"><div class="eyebrow">Protein consistency</div><strong>' +
+          '</div></div>').join("") + '</div><div class="macros"><div class="macro"><div class="eyebrow">Avg protein</div><strong>' +
+          num(data.week?.averages?.proteinG) + 'g</strong></div><div class="macro"><div class="eyebrow">Protein goal days</div><strong>' +
           num(data.week?.proteinConsistencyPct) + '%</strong></div></div></section>' +
           '<section id="panel-weight" class="panel">' +
           (weights.length ? '<div class="spark"><svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="Weight trend"><polyline points="' +
@@ -538,9 +394,10 @@ export const WIDGET_HTML = String.raw`
             num(data.weightTrend?.weeklyRate, 2) + ' / week</div></div>' : '<div class="empty">No weight entries yet.</div>') +
           '</section><section id="panel-saved" class="panel"><div class="list">' +
           (saved.length ? saved.map((meal) => '<div class="row"><div><div class="row-title">' + esc(meal.name) +
-            '</div><div class="row-meta">' + esc(meal.restaurant || "Saved meal") + ' · ' + num(meal.totals?.proteinG) +
-            'g protein</div></div><div><div class="row-value">' + num(meal.totals?.calories) +
-            ' cal</div><button type="button" class="btn ghost" data-log-saved="' + esc(meal.id) +
+            '</div><div class="row-meta">' + esc(meal.restaurant || "Saved meal") +
+            '</div></div><div><div class="meal-metrics"><strong>' + num(meal.totals?.proteinG) +
+            'g protein</strong><small>' + num(meal.totals?.calories) +
+            ' cal</small></div><button type="button" class="btn ghost" data-log-saved="' + esc(meal.id) +
             '">Log now</button></div></div>').join("")
             : '<div class="empty">No saved meals yet.</div>') + '</div></section>' +
           '<section id="panel-review" class="panel"><div class="list">' +
@@ -550,16 +407,6 @@ export const WIDGET_HTML = String.raw`
             ? '<div class="actions"><button type="button" id="set-goals" class="btn primary">Set goals</button></div>'
             : '') + '</section></div>';
         setupTabs();
-        bindSavedIngredientRemovals([...(today.meals || []), ...review]);
-        bindMealEdits([...(today.meals || []), ...review]);
-        document.querySelectorAll("[data-delete]").forEach((button) => {
-          button.addEventListener("click", async () => {
-            if (!confirm("Remove this meal from your history?")) return;
-            await callTool("delete_meal", { mealId: button.dataset.delete, confirmed: true });
-            const next = await callTool("render_dashboard", { date: today.date });
-            if (next?.structuredContent) render(next.structuredContent);
-          });
-        });
         document.querySelectorAll("[data-log-saved]").forEach((button) => {
           button.addEventListener("click", async () => {
             const result = await callTool("log_saved_meal", {
@@ -574,6 +421,14 @@ export const WIDGET_HTML = String.raw`
         if (goalsButton) goalsButton.onclick = () =>
           sendMessage("Help me set calorie, protein, macro, fiber, weight, and timezone goals.");
       }
+      function animateProteinProgress() {
+        document.querySelectorAll("[data-progress-target]").forEach((bar) => {
+          const target = Math.max(0, Math.min(100, Number(bar.dataset.progressTarget || 0)));
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            bar.style.width = target + "%";
+          }));
+        });
+      }
       function render(data) {
         latestOutput = data;
         if (data?.kind === "meal_preview") renderPreview(data);
@@ -581,6 +436,7 @@ export const WIDGET_HTML = String.raw`
         else if (data?.kind === "day_summary") renderDaySummary(data);
         else if (data?.kind === "nutrition_dashboard") renderDashboard(data);
         else root.innerHTML = '<div class="card empty">Nutrition data is ready.</div>';
+        animateProteinProgress();
       }
       window.addEventListener("message", (event) => {
         if (event.source !== window.parent) return;
