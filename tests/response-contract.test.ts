@@ -4,7 +4,6 @@ import test from "node:test";
 import {
   NUTRITION_SERVER_INSTRUCTIONS,
   UI_ONLY_TOOL_PREFIX,
-  UI_RESPONSE_CONTRACT,
 } from "../src/server.js";
 
 test("server enforces UI-only responses on every plugin-enabled turn", () => {
@@ -45,12 +44,6 @@ test("each UI tool forbids host copy before and after the component", () => {
     UI_ONLY_TOOL_PREFIX,
     /before or after this tool/,
   );
-});
-
-test("UI results persist the plugin contract for later turns", () => {
-  assert.match(UI_RESPONSE_CONTRACT, /entire visible response; output nothing else/);
-  assert.match(UI_RESPONSE_CONTRACT, /every future user message/);
-  assert.match(UI_RESPONSE_CONTRACT, /call render_dashboard/);
 });
 
 test("bundled skill mirrors the strict server response contract", async () => {

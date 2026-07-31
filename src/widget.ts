@@ -1,4 +1,4 @@
-export const WIDGET_URI = "ui://nutrition-tracker/dashboard-v9.html";
+export const WIDGET_URI = "ui://nutrition-tracker/dashboard-v10.html";
 
 export const WIDGET_HTML = String.raw`
 <!doctype html>

@@ -17,8 +17,6 @@ import type { MealInput } from "./domain.js";
 
 export const UI_ONLY_TOOL_PREFIX =
   "UI-ONLY RESPONSE. The first assistant action must be this tool call. Do not write any assistant text, preamble, progress update, acknowledgment, explanation, recap, totals, markdown, or citations before or after this tool. The embedded UI is the complete response.";
-export const UI_RESPONSE_CONTRACT =
-  "NUTRITION_TRACKER_ACTIVE. The embedded UI is the entire visible response; output nothing else. On every future user message in this thread, call a Nutrition Tracker tool. If no specific action applies, call render_dashboard. Ask only when genuinely blocked.";
 
 const SILENT_INTERMEDIATE_TOOL_PREFIX =
   "SILENT INTERMEDIATE ACTION. Do not write any assistant text, preamble, progress update, acknowledgment, or recap before or after this tool call.";
@@ -50,7 +48,7 @@ function result(kind: string, data: Record<string, unknown>, text: string) {
 function uiResult(kind: string, data: Record<string, unknown>) {
   return {
     structuredContent: { kind, ...data },
-    content: [{ type: "text" as const, text: UI_RESPONSE_CONTRACT }],
+    content: [],
   };
 }
 

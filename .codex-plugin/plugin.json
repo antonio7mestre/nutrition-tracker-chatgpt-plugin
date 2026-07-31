@@ -1,6 +1,6 @@
 {
   "name": "nutrition-tracker",
-  "version": "0.2.0+codex.20260731012915",
+  "version": "0.2.0+codex.20260731013138",
   "description": "Private nutrition tracking with automatic assumptions and UI-only responses.",
   "author": {
     "name": "Antonio Mestre",

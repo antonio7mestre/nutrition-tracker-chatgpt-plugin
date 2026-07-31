@@ -3,7 +3,7 @@ import test from "node:test";
 import { WIDGET_HTML, WIDGET_URI } from "../src/widget.js";
 
 test("day summaries keep meal details display-only and protein-first", () => {
-  assert.equal(WIDGET_URI, "ui://nutrition-tracker/dashboard-v9.html");
+  assert.equal(WIDGET_URI, "ui://nutrition-tracker/dashboard-v10.html");
   assert.match(WIDGET_HTML, /meal-metrics/);
   assert.match(WIDGET_HTML, /ingredient-metrics/);
   assert.doesNotMatch(WIDGET_HTML, /data-remove-saved-item/);
