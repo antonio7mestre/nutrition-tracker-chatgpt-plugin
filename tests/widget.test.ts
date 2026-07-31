@@ -3,7 +3,7 @@ import test from "node:test";
 import { WIDGET_HTML, WIDGET_URI } from "../src/widget.js";
 
 test("day summaries keep meal details display-only and protein-first", () => {
-  assert.equal(WIDGET_URI, "ui://nutrition-tracker/dashboard-v6.html");
+  assert.equal(WIDGET_URI, "ui://nutrition-tracker/dashboard-v9.html");
   assert.match(WIDGET_HTML, /meal-metrics/);
   assert.match(WIDGET_HTML, /ingredient-metrics/);
   assert.doesNotMatch(WIDGET_HTML, /data-remove-saved-item/);
@@ -35,4 +35,12 @@ test("protein progress animates from the pre-meal total", () => {
   assert.match(WIDGET_HTML, /data-progress-target/);
   assert.match(WIDGET_HTML, /animateProteinProgress/);
   assert.match(WIDGET_HTML, /transition:width \.72s/);
+});
+
+test("component keeps the strict response contract in future turns", () => {
+  assert.match(WIDGET_HTML, /ui\/update-model-context/);
+  assert.match(WIDGET_HTML, /Nutrition Tracker remains active for this thread/);
+  assert.match(WIDGET_HTML, /acknowledgments like 'thanks'/);
+  assert.match(WIDGET_HTML, /fallbackTool: "render_dashboard"/);
+  assert.match(WIDGET_HTML, /protocolVersion: "2026-01-26"/);
 });

@@ -2,7 +2,7 @@
 
 A personal ChatGPT and Codex plugin for meal logging, nutrition goals, saved orders, and weight trends.
 
-ChatGPT handles meal photos, voice notes, restaurant orders, and natural-language interpretation with the model already available in the product. The plugin makes no OpenAI API calls. It calculates totals, saves analyzed meals immediately, supports natural-language corrections afterward, and persists only structured nutrition data in SQLite locally or Cloudflare D1 in production.
+ChatGPT handles meal photos, voice notes, restaurant orders, and natural-language interpretation with the model already available in the product. The plugin makes no OpenAI API calls. It calculates totals, saves analyzed meals immediately, supports natural-language corrections afterward, and persists only structured nutrition data in SQLite locally or Cloudflare D1 in production. While the plugin is active, it makes reasonable assumptions, asks only when genuinely blocked, and uses the embedded UI as the complete response on every successful turn.
 
 ## What it includes
 

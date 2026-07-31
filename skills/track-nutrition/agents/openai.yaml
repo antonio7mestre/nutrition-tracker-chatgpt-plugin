@@ -1,4 +1,6 @@
 interface:
   display_name: "Track Nutrition"
-  short_description: "Log meals and track nutrition automatically"
-  default_prompt: "Use $track-nutrition to log this meal and show my remaining goals."
+  short_description: "Automatic nutrition tracking with UI-only replies"
+  default_prompt: "Use $track-nutrition, make reasonable assumptions, act immediately, and return only its UI unless one blocking question is unavoidable."
+policy:
+  allow_implicit_invocation: true

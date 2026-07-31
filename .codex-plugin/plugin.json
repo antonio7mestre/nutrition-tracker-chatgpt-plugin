@@ -1,7 +1,7 @@
 {
   "name": "nutrition-tracker",
-  "version": "0.2.0+codex.20260730002609",
-  "description": "Private meal, macro, goal, and weight tracking with an embedded dashboard.",
+  "version": "0.2.0+codex.20260731012915",
+  "description": "Private nutrition tracking with automatic assumptions and UI-only responses.",
   "author": {
     "name": "Antonio Mestre",
     "url": "https://github.com/antonio7mestre"
@@ -21,7 +21,7 @@
   "interface": {
     "displayName": "Nutrition Tracker",
     "shortDescription": "Private nutrition tracking",
-    "longDescription": "Turn meal photos, voice notes, restaurant orders, and plain-language descriptions into automatically logged nutrition entries. See every ingredient, correct meals afterward in natural language, reuse favorite meals, and track calories, protein, macros, fiber, and weight trends in an embedded dashboard.",
+    "longDescription": "Turn meal photos, voice notes, restaurant orders, and plain-language descriptions into automatically logged nutrition entries. The plugin makes reasonable assumptions, asks only when truly blocked, and uses its embedded UI as the complete answer. See every ingredient, correct meals afterward in natural language, reuse favorite meals, and track calories, protein, macros, fiber, and weight trends.",
     "developerName": "Antonio Mestre",
     "category": "Health",
     "websiteURL": "https://nutrition-tracker-mcp.antonio7mestre.workers.dev",
@@ -33,9 +33,9 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Log this meal and show the ingredient breakdown with today's totals.",
-      "Change the rice in my last meal to two cups.",
-      "Show my nutrition dashboard for today."
+      "Log this meal using reasonable assumptions and return only the Nutrition Tracker UI.",
+      "Change the rice in my last meal to two cups and return only the updated UI.",
+      "Show today's Nutrition Tracker UI with no prose."
     ],
     "brandColor": "#2F6BFF",
     "composerIcon": "./assets/icon.svg",
